@@ -42,6 +42,7 @@ class MySQL:
         else:
             results=[dict(zip(columns, row)) for row in cursor.fetchall()]
         cursor.close()
+        self._fields=None
         return results
 
 
@@ -59,6 +60,7 @@ class MySQL:
         if commit:
             self.commit()
         cursor.close()
+        self._fields=None
         return last_id
 
 
@@ -97,6 +99,18 @@ class MySQL:
         #e.g query ("UPDATE sms_outgoing SET status=%s WHERE id=%s",data_list=[(STATUS_IN_QUEUE,m.id) for m in messages]
         self._query="UPDATE %s SET %s WHERE %s "%(self._table_name,terms,condition)
         return self.__run(commit=commit,data_list=data_list)
+
+    def insert(self,values,commit=True):
+        if self._fields=='*':
+            self._query="INSERT INTO %s  VALUES (%s)"%(self._table_name,values)
+        else:
+            self._query="INSERT INTO %s (%s) VALUES (%s)"%(self._table_name,self._fields,values)
+        return self.__run(commit=commit)
+
+
+        
+
+
 
 
 
