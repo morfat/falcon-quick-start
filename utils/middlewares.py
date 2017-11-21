@@ -26,7 +26,7 @@ class BaseMiddleWare:
         #resource.auth=self._auth
 
     def process_response(self,req,view,req_succeeded): #called immediately before the response is returned.
-        self._db.connection().close()
+        self._db._connection.close()
 
 
     def authenticate(self,request):

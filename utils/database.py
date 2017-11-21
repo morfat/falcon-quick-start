@@ -12,29 +12,28 @@ class MySQL:
         self._connection=MySQLdb.connect(user=DATABASE.get('USER'),passwd=DATABASE.get('PASSWORD'),
                                 db=DATABASE.get('NAME'),host=DATABASE.get('HOST'),port=DATABASE.get('PORT')
                             )
-        self._executed_query=None
+        self._query=None
+        self._table_name=None
+        self._fields=None #fields for table query on select or search. or insert
+
+
+
         
        
-    def connection(self): #return the connection initiated.
-        return self._connection
+    def cursor(self): #create cursor on each call
+        return self._connection.cursor()
 
-
-    def cursor(self):
-        return self.connection().cursor()
-
+  
    
-    def get_executed_query(self,):
-        return self._executed_query
-
-   
-    def get_results(self,cursor,fields,as_tuple=True):
+    def __get_results(self,cursor,as_tuple=False):
         #returns results, after running db query.
         if as_tuple:
-            return map(namedtuple('Result',[f[0] for f in cursor.description]) if not fields else namedtuple('Result',fields)._make,cursor.fetchall())
+            return map(namedtuple('Result',[f[0] for f in cursor.description]))
 
         #we return as dictionary list
-        columns = [col[0] for col in cursor.description] if not fields else fields
+        columns = [col[0] for col in cursor.description]
         return [dict(zip(columns, row)) for row in cursor.fetchall()]
+
 
 
     def fetch(self,sql,fields=None,as_tuple=False,many=True):
@@ -53,9 +52,6 @@ class MySQL:
         cursor.close()
         return results
 
-  
-       
-
 
     def save(self,sql,commit=True,data_list=None):
         #saves and commits updates or inserts. must return True if done so.
@@ -67,15 +63,34 @@ class MySQL:
             cursor.executemany(sql,data_list)
         else:
             cursor.execute(sql)
-            self._executed_query=cursor._last_executed
+            self._query=cursor._last_executed
             last_id=cursor.lastrowid
 
         if commit:
             self.connection().commit()
         cursor.close()
         return last_id
-    
-    
 
 
+    
+    def table(self,table_name,fields=None): #should be called before all non custom other query methods
+        self._fields=fields if fields else '*'
+        self._table_name=table_name
+        return self
+
+    def select(self,offset=0,limit=1000):
+        #Select records from table
+        self._query="SELECT %s FROM %s LIMIT %s , %s"%(self._fields,self._table_name,offset,limit)
+        cursor=self.cursor()
+        cursor.execute(self._query)
+        results=self.__get_results(cursor)
+        cursor.close()
+        return results
+
+
+
+
+
+
+        
     
