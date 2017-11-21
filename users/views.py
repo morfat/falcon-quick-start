@@ -18,9 +18,11 @@ class List(object):
         #users=self.db.table('users').update(terms="first_name='ogega' ",condition="id=3")
         #users=self.db.table('users').search("first_name like '%o%' ")
 
-        users=self.db.table('users').insert("6,'mosoti@me.com','mogaka','F','L'")
-        users=self.db.table('users','id,email,password').insert("7,'mosoti@me.com','mogaka'")
+        #users=self.db.table('users').insert("6,'mosoti@me.com','mogaka','F','L'")
+        #users=self.db.table('users','id,email,password').insert("7,'mosoti@me.com','mogaka'")
         users=self.db.table('users').select()
+        #users=self.db.table('users').delete("id=6")
+
 
 
 

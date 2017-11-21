@@ -7,6 +7,22 @@ from project.settings import DATABASE
 class MySQL:
     """ Creates a MySQL connection when the class is instantiated"""
 
+    """SAmple query usagge :
+       #users=self.db.table('users').select()
+        #users=self.db.table('users','id,email').select()
+        #users=self.db.table('users').get(1)
+        #users=self.db.table('users').search("first_name like '%mosoti%' ")
+
+        #users=self.db.table('users').update(terms="first_name='ogega' ",condition="id=3")
+        #users=self.db.table('users').search("first_name like '%o%' ")
+
+        #users=self.db.table('users').insert("6,'mosoti@me.com','mogaka','F','L'")
+        #users=self.db.table('users','id,email,password').insert("7,'mosoti@me.com','mogaka'")
+        users=self.db.table('users').select()
+        #users=self.db.table('users').delete("id=6")
+    """
+    
+
 
     def __init__(self,):
         self._connection=MySQLdb.connect(user=DATABASE.get('USER'),passwd=DATABASE.get('PASSWORD'),
@@ -106,6 +122,12 @@ class MySQL:
         else:
             self._query="INSERT INTO %s (%s) VALUES (%s)"%(self._table_name,self._fields,values)
         return self.__run(commit=commit)
+
+    def delete(self,condition,commit=True):
+        self._query="DELETE FROM %s WHERE %s"%(self._table_name,condition)
+        return self.__run(commit=commit)
+
+
 
 
         
