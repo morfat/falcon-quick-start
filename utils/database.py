@@ -21,7 +21,7 @@ class MySQL:
         users=self.db.table('users').select()
         #users=self.db.table('users').delete("id=6")
     """
-    
+
 
 
     def __init__(self,):
@@ -126,6 +126,15 @@ class MySQL:
     def delete(self,condition,commit=True):
         self._query="DELETE FROM %s WHERE %s"%(self._table_name,condition)
         return self.__run(commit=commit)
+
+    def count(self,condition=None):
+        if condition:
+            self._query="SELECT COUNT(*) FROM %s WHERE %s"%(self._table_name,condition)
+        else:
+            self._query="SELECT COUNT(*) FROM %s "%(self._table_name)
+
+        return self.__get_results(fetch_one=True)
+
 
 
 
