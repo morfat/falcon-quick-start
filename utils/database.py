@@ -41,26 +41,6 @@ class MySQL:
         cursor.close()
         return results
 
-    
-
-
-
-    def fetch(self,sql,fields=None,as_tuple=False,many=True):
-        """Default is to return results as dict. If many is given, we return a list of results else just one results."""
-        cursor=self.cursor()
-        cursor.execute(sql)
-        if many:
-            results=self.get_results(cursor,fields,as_tuple=as_tuple)
-        else:
-            r=cursor.fetchone()
-            if cursor.rowcount:
-                results=dict(zip([col[0] for col in cursor.description], r))
-            else:
-                results={}
-        
-        cursor.close()
-        return results
-
 
     def save(self,sql,commit=True,data_list=None):
         #saves and commits updates or inserts. must return True if done so.
@@ -97,6 +77,12 @@ class MySQL:
         #Select records from table
         self._query="SELECT %s FROM %s  WHERE id=%s "%(self._fields,self._table_name,pk)
         return self.__get_results(fetch_one=True)
+
+    def search(self,terms):#get results by filter of where clause. et.c
+        self._query="SELECT %s FROM %s  WHERE %s "%(self._fields,self._table_name,terms)
+        return self.__get_results()
+    
+
 
 
 

@@ -10,9 +10,11 @@ class List(object):
     def on_get(self,req,resp):
         resp.status=falcon.HTTP_200 #this is default
 
-        users=self.db.table('users').select()
+        #users=self.db.table('users').select()
         #users=self.db.table('users','id,email').select()
         #users=self.db.table('users').get(1)
+        #users=self.db.table('users').search("first_name like '%mosoti%' ")
+
 
         resp.media=users
 
