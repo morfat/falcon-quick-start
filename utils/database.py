@@ -25,14 +25,23 @@ class MySQL:
 
   
    
-    def __get_results(self,cursor,as_tuple=False):
+    def __get_results(self,fetch_one=False):
+        cursor=self.cursor()
+        cursor.execute(self._query)
         #returns results, after running db query.
-        if as_tuple:
-            return map(namedtuple('Result',[f[0] for f in cursor.description]))
+        #if as_tuple:
+        #    return map(namedtuple('Result',[f[0] for f in cursor.description]))
 
         #we return as dictionary list
         columns = [col[0] for col in cursor.description]
-        return [dict(zip(columns, row)) for row in cursor.fetchall()]
+        if fetch_one:
+            results=dict(zip(columns, cursor.fetchone()))
+        else:
+            results=[dict(zip(columns, row)) for row in cursor.fetchall()]
+        cursor.close()
+        return results
+
+    
 
 
 
@@ -81,11 +90,13 @@ class MySQL:
     def select(self,offset=0,limit=1000):
         #Select records from table
         self._query="SELECT %s FROM %s LIMIT %s , %s"%(self._fields,self._table_name,offset,limit)
-        cursor=self.cursor()
-        cursor.execute(self._query)
-        results=self.__get_results(cursor)
-        cursor.close()
-        return results
+        return self.__get_results()
+        
+
+    def get(self,pk):#get by primary key
+        #Select records from table
+        self._query="SELECT %s FROM %s  WHERE id=%s "%(self._fields,self._table_name,pk)
+        return self.__get_results(fetch_one=True)
 
 
 

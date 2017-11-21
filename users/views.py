@@ -11,7 +11,8 @@ class List(object):
         resp.status=falcon.HTTP_200 #this is default
 
         users=self.db.table('users').select()
-
+        #users=self.db.table('users','id,email').select()
+        #users=self.db.table('users').get(1)
 
         resp.media=users
 
