@@ -14,6 +14,10 @@ class List(object):
         #users=self.db.table('users','id,email').select()
         #users=self.db.table('users').get(1)
         #users=self.db.table('users').search("first_name like '%mosoti%' ")
+        
+        users=self.db.table('users').update(terms="first_name='ogega' ",condition="id=3")
+        users=self.db.table('users').search("first_name like '%o%' ")
+
 
 
         resp.media=users

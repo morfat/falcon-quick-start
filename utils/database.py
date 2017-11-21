@@ -15,16 +15,19 @@ class MySQL:
         self._query=None
         self._table_name=None
         self._fields=None #fields for table query on select or search. or insert
-
-
-
-        
        
     def cursor(self): #create cursor on each call
         return self._connection.cursor()
 
-  
-   
+    def commit(self):
+        return self._connection.commit()
+
+    def rollback(self):
+        return self._connection.rollback()
+
+    def close(self):
+        return self._connection.close()
+
     def __get_results(self,fetch_one=False):
         cursor=self.cursor()
         cursor.execute(self._query)
@@ -42,21 +45,19 @@ class MySQL:
         return results
 
 
-    def save(self,sql,commit=True,data_list=None):
+    def __run(self,commit=True,data_list=None):
         #saves and commits updates or inserts. must return True if done so.
         last_id=None
         cursor=self.cursor()
         if data_list:
             #if we are doing many separated queries.
             """ example :  #saved=mysql.save_many(sql="UPDATE sms_outgoing SET status=%s WHERE id=%s",data_list=[(STATUS_IN_QUEUE,m.id) for m in messages]) """
-            cursor.executemany(sql,data_list)
+            cursor.executemany(self._query,data_list)
         else:
-            cursor.execute(sql)
-            self._query=cursor._last_executed
+            cursor.execute(self._query)
             last_id=cursor.lastrowid
-
         if commit:
-            self.connection().commit()
+            self.commit()
         cursor.close()
         return last_id
 
@@ -66,6 +67,8 @@ class MySQL:
         self._fields=fields if fields else '*'
         self._table_name=table_name
         return self
+
+    ###Data Retrival
 
     def select(self,offset=0,limit=1000):
         #Select records from table
@@ -81,7 +84,23 @@ class MySQL:
     def search(self,terms):#get results by filter of where clause. et.c
         self._query="SELECT %s FROM %s  WHERE %s "%(self._fields,self._table_name,terms)
         return self.__get_results()
-    
+
+    def select_raw(self,sql): #run any complex select or simple select  sql query.
+        #run any query
+        self._query=sql
+        return self.__get_results()
+
+    ###DAta manipulate
+    def update(self,terms,condition,data_list=None,commit=True):
+        #write an update of the db table. 
+        #if datalist is give, many update with many queries  is run. 
+        #e.g query ("UPDATE sms_outgoing SET status=%s WHERE id=%s",data_list=[(STATUS_IN_QUEUE,m.id) for m in messages]
+        self._query="UPDATE %s SET %s WHERE %s "%(self._table_name,terms,condition)
+        return self.__run(commit=commit,data_list=data_list)
+
+
+
+
 
 
 
