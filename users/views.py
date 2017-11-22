@@ -4,11 +4,14 @@ from .models import User
 
 
 #from falcon.media.validators import jsonschema
+#from utils.validators import validate_data
 
 class List(object):
 
     def on_get(self,req,resp):
         resp.status=falcon.HTTP_200 #this is default
+        print (User.get_schema())
+
 
         #users=self.db.table('users').select()
         #users=self.db.table('users','id,email').select()
@@ -25,15 +28,21 @@ class List(object):
         #users=self.db.table('users').count("id=3")
 
 
-
-
         resp.media=users
 
 
 
-    #@jsonschema.validate(User.schema())
+
     def on_post(self,req,resp):
-        resp.media={}
+        user=User(self.db)
+        user.validate(req.media) #validate data
+        #create 
+        created=user.create()
+        #user.validated_data
+        resp.media=created
+
+
+
 
 
 

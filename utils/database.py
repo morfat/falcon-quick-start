@@ -116,11 +116,13 @@ class MySQL:
         self._query="UPDATE %s SET %s WHERE %s "%(self._table_name,terms,condition)
         return self.__run(commit=commit,data_list=data_list)
 
-    def insert(self,values,commit=True):
+    def insert(self,*values,commit=True):
+        print (values)
+
         if self._fields=='*':
             self._query="INSERT INTO %s  VALUES (%s)"%(self._table_name,values)
         else:
-            self._query="INSERT INTO %s (%s) VALUES (%s)"%(self._table_name,self._fields,values)
+            self._query="INSERT INTO %s (%s) VALUES %s"%(self._table_name,self._fields,values)
         return self.__run(commit=commit)
 
     def delete(self,condition,commit=True):
