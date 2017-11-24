@@ -21,7 +21,8 @@ class List(BaseView):
         #users=self.db.table('users').count("id=3")
 
         users=User(self.db).all()
-        
+        #req.log_error("Sample error logged")
+ 
         resp.media=self.format_media(response=users,message="Request successful")
         
 
@@ -36,7 +37,6 @@ class List(BaseView):
 
 
 class Detail(BaseView):
-
     def on_get(self,req,resp,user_id):
         #user=User(self.db).filter("id=%s"%s(user_id))
         #resp.media=user
