@@ -1,4 +1,5 @@
-from utils.models import Model 
+from generics.models import Model 
+
 from utils.utils import current_date_time
 
 
@@ -60,9 +61,10 @@ class User(Model):
         ").insert(current_date_time(),data.get('email'),password,
         data.get('first_name'),data.get('last_name'),data.get('is_superuser'),
         data.get('is_staff'),auth_token_key,current_date_time(),True)
-
         data.update({"id":id})
+
         return data
+    
 
 
     

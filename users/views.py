@@ -2,17 +2,10 @@ import falcon
 
 from .models import User
 
+from generics.views  import BaseView
 
-#from falcon.media.validators import jsonschema
-#from utils.validators import validate_data
-
-class List(object):
-
+class List(BaseView):
     def on_get(self,req,resp):
-        resp.status=falcon.HTTP_200 #this is default
-        print (User.get_schema())
-
-
         #users=self.db.table('users').select()
         #users=self.db.table('users','id,email').select()
         #users=self.db.table('users').get(1)
@@ -23,15 +16,14 @@ class List(object):
 
         #users=self.db.table('users').insert("6,'mosoti@me.com','mogaka','F','L'")
         #users=self.db.table('users','id,email,password').insert("7,'mosoti@me.com','mogaka'")
-        users=self.db.table('users').select()
+        #users=self.db.table('users').select()
         #users=self.db.table('users').delete("id=6")
         #users=self.db.table('users').count("id=3")
 
-
-        resp.media=users
-
-
-
+        users=User(self.db).all()
+        
+        resp.media=self.format_media(response=users,message="Request successful")
+        
 
     def on_post(self,req,resp):
         user=User(self.db)
@@ -39,15 +31,11 @@ class List(object):
         #create 
         created=user.create()
         #user.validated_data
-        resp.media=created
+        resp.media=self.format_media(response=created,message="User Created Successfully")
 
 
 
-
-
-
-
-class Detail(object):
+class Detail(BaseView):
 
     def on_get(self,req,resp,user_id):
         #user=User(self.db).filter("id=%s"%s(user_id))

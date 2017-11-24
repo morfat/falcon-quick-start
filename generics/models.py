@@ -18,9 +18,6 @@ class Model(object):
         self.write_only=[]
 
 
-
-
-    
     def get_schema(self):
         #get schema by providing required fields. Provideed as a list. e.g ["id","name"]
         self.schema.update({"properties":self.properties,'required':self.required,"title":self.db_table,"type": "object"})
@@ -34,6 +31,9 @@ class Model(object):
 
     def delete(self,pk):
         pass
+
+    def all(self):
+        return self._db.table(self.db_table).select()
 
     def validate(self,data):
         try:

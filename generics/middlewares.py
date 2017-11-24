@@ -1,4 +1,4 @@
-from .database import MySQL
+from utils.database import MySQL
 
 #from .authentication import Authenticate
 import falcon
@@ -27,6 +27,8 @@ class BaseMiddleWare:
 
     def process_response(self,req,view,req_succeeded): #called immediately before the response is returned.
         self._db.close()
+        
+
 
 
     def authenticate(self,request):
