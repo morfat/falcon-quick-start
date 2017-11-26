@@ -20,10 +20,13 @@ class List(BaseView):
         #users=self.db.table('users').delete("id=6")
         #users=self.db.table('users').count("id=3")
 
-        users=User(self.db).all()
+        users=User(self.db).all().paginate(url=req.uri,query_params=req.params)
+        print (users)
+
         #req.log_error("Sample error logged")
- 
-        resp.media=self.format_media(response=users,message="Request successful")
+        
+        resp.media=self.format_media(response=users[0],pagination=users[1],message="Request successful")
+      
         
 
     def on_post(self,req,resp):

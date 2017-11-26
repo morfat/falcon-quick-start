@@ -2,6 +2,9 @@ import MySQLdb
 from collections import namedtuple
 
 from project.settings import DATABASE
+from project.settings import PAGINATION
+
+from utils.pagination import get_paginated_response
 
 
 class MySQL:
@@ -88,11 +91,14 @@ class MySQL:
 
     ###Data Retrival
 
-    def select(self,offset=0,limit=1000):
+    def select(self,):
         #Select records from table
-        self._query="SELECT %s FROM %s LIMIT %s , %s"%(self._fields,self._table_name,offset,limit)
-        return self.__get_results()
+        self._query="SELECT %s FROM %s "%(self._fields,self._table_name)
+        return self
         
+    def results(self):
+        return self.__get_results()
+
 
     def get(self,pk):#get by primary key
         #Select records from table
@@ -101,12 +107,12 @@ class MySQL:
 
     def search(self,terms):#get results by filter of where clause. et.c
         self._query="SELECT %s FROM %s  WHERE %s "%(self._fields,self._table_name,terms)
-        return self.__get_results()
+        return self
 
     def select_raw(self,sql): #run any complex select or simple select  sql query.
         #run any query
         self._query=sql
-        return self.__get_results()
+        return self
 
     ###DAta manipulate
     def update(self,terms,condition,data_list=None,commit=True):
@@ -136,6 +142,52 @@ class MySQL:
             self._query="SELECT COUNT(*) FROM %s "%(self._table_name)
 
         return self.__get_results(fetch_one=True)
+
+
+    def paginate(self,url,query_params):
+        page=int(query_params.get('page',1))
+
+        page_size=int(query_params.get('page_size',PAGINATION.get('page_size')))
+
+        offset=(page-1)*page_size
+        limit=page_size
+
+        #LIMIT %s , %s
+        old_sql=self._query
+
+        sql_count='SELECT count(*) as total_count '+self._query[self._query.find('FROM'):]
+        print (sql_count)
+        self._query=sql_count
+
+        result=self.__get_results(fetch_one=True)
+        count=result.get('total_count')
+        
+        #real query
+        self._query=old_sql+' LIMIT %s , %s '%(offset,limit)
+        results=self.__get_results()
+        print (self._query)
+
+        pagination=get_paginated_response(url,page_size,page,offset,limit,count)
+        return (results,pagination,)
+
+            
+
+            
+
+
+
+
+
+        
+
+
+
+
+
+    
+
+
+
 
 
 
