@@ -81,6 +81,7 @@ class User(Model):
         user=self._db.table(self.db_table).search(" email='%s' "%(email)).results()
         if len(user) !=1:
             return None
+        del user[0]['password']
         return user[0]
 
     def get_by_auth_token_key(self,token):

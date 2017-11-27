@@ -62,7 +62,7 @@ class Detail(BaseView):
 class Authenticate(BaseView):
     #get user authenticated
     login_required=False
-    
+
 
     def on_post(self,req,resp):
         #authenticate user given username and password
@@ -79,7 +79,7 @@ class Authenticate(BaseView):
             raise falcon.HTTPBadRequest('Invalid Credentials',description="Login Failed")
         
         #verify password
-        password_hash=user_data.pop('password')
+        #password_hash=user_data.pop('password')
 
         if not user.verify_password(hash=password_hash,password=data.get('password')):
             raise falcon.HTTPBadRequest('Invalid Credentials',description="Invalid username or password")    
