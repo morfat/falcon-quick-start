@@ -16,7 +16,7 @@ class CustomJSONHandler(JSONHandler):
 
     def serialize(self, media):
         #here we can customize to hwo we need our formats to be.
-        print ("Serilize")
+        #print ("Serilize")
       
         return json.dumps(media, default=self.json_serial,ensure_ascii=False).encode('utf-8')
 

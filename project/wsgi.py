@@ -3,7 +3,7 @@
 import falcon
 
 #General
-from generics.middlewares import NoAuthMiddleWare
+from generics.middlewares import AuthMiddleWare
 from generics.handlers import api_error_handler,CustomJSONHandler
 
 from falcon import media
@@ -18,7 +18,7 @@ URL_PATTERNS=[users_patterns] #register all url patterns here
 
 
 def get_app():
-    app=falcon.API(media_type='application/json',middleware=[NoAuthMiddleWare(),],)
+    app=falcon.API(media_type='application/json',middleware=[AuthMiddleWare(),],)
     
     #have our custom json handler here
     handlers = media.Handlers({

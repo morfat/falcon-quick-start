@@ -61,7 +61,9 @@ class Detail(BaseView):
 
 class Authenticate(BaseView):
     #get user authenticated
+    login_required=False
     
+
     def on_post(self,req,resp):
         #authenticate user given username and password
         schema={"properties":{"email": {"type": "string","format":"email"},

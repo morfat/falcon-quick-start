@@ -3,6 +3,7 @@
 
 class BaseView(object):
 	login_required=True #by default require login
+	user=None
 	
 	def format_media(self,response,pagination=None,message=None):
 		if pagination and message:
