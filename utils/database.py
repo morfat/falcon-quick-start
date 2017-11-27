@@ -123,8 +123,7 @@ class MySQL:
         return self.__run(commit=commit,data_list=data_list)
 
     def insert(self,*values,commit=True):
-        print (values)
-
+        
         if self._fields=='*':
             self._query="INSERT INTO %s  VALUES (%s)"%(self._table_name,values)
         else:
@@ -156,7 +155,7 @@ class MySQL:
         old_sql=self._query
 
         sql_count='SELECT count(*) as total_count '+self._query[self._query.find('FROM'):]
-        print (sql_count)
+        
         self._query=sql_count
 
         result=self.__get_results(fetch_one=True)
@@ -165,7 +164,7 @@ class MySQL:
         #real query
         self._query=old_sql+' LIMIT %s , %s '%(offset,limit)
         results=self.__get_results()
-        print (self._query)
+       
 
         pagination=get_paginated_response(url,page_size,page,offset,limit,count)
         return (results,pagination,)

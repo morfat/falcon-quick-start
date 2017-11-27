@@ -18,7 +18,7 @@ URL_PATTERNS=[users_patterns] #register all url patterns here
 
 
 def get_app():
-    app=falcon.API(middleware=[NoAuthMiddleWare(),],)
+    app=falcon.API(media_type='application/json',middleware=[NoAuthMiddleWare(),],)
     
     #have our custom json handler here
     handlers = media.Handlers({
@@ -27,6 +27,7 @@ def get_app():
     #register the custom handler here
     app.req_options.media_handlers=handlers
     app.resp_options.media_handlers=handlers
+    
 
     #add custom error handler
     app.add_error_handler(falcon.HTTPError,handler=api_error_handler)

@@ -22,14 +22,13 @@ class BaseMiddleWare:
         pass
 
     def process_resource(self,req,resp,view,params):
+        print (view.login_required) #use this to check if this view needed authentication.. then apply necessary info
         view.db=self._db
         #resource.auth=self._auth
 
     def process_response(self,req,view,req_succeeded): #called immediately before the response is returned.
         self._db.close()
         
-
-
 
     def authenticate(self,request):
         """To be implemented by inheriting classes. To return app and or  user"""

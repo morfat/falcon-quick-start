@@ -1,6 +1,8 @@
 from generics.models import Model 
 
 from utils.utils import current_date_time
+from argon2 import PasswordHasher as ph
+import uuid
 
 
 
@@ -53,8 +55,9 @@ class User(Model):
 
     def create(self,):
         data=self.get_cleaned_data(self.read_only)
-        password="test" #data.get("password")
-        auth_token_key="Test"
+        password=self.hash_password(data.get("password","2016user"))
+        auth_token_key=uuid.uuid4().hex
+
 
         id=self._db.table(self.db_table,"date_created,email,password,first_name,\
         last_name,is_superuser,is_staff,auth_token_key,auth_token_date_created,is_active\
@@ -64,7 +67,25 @@ class User(Model):
         data.update({"id":id})
 
         return data
-    
+
+    def hash_password(self,password):
+        return ph().hash(password)
+
+    def verify_password(self,hash,password):
+        try:
+            return ph().verify(hash,password)
+        except:
+            return False
+
+    def get_by_email(self,email):
+        user=self._db.table(self.db_table).search(" email='%s' "%(email)).results()
+        if len(user) !=1:
+            return None
+        return user[0]
+
+
+
+            
 
 
     

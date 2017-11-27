@@ -3,8 +3,11 @@ import falcon
 from .models import User
 
 from generics.views  import BaseView
+from utils.utils import validate_jsonschema
 
 class List(BaseView):
+    
+
     def on_get(self,req,resp):
         #users=self.db.table('users').select()
         #users=self.db.table('users','id,email').select()
@@ -21,7 +24,7 @@ class List(BaseView):
         #users=self.db.table('users').count("id=3")
 
         users=User(self.db).all().paginate(url=req.uri,query_params=req.params)
-        print (users)
+        #print (users)
 
         #req.log_error("Sample error logged")
         
@@ -54,3 +57,31 @@ class Detail(BaseView):
         #
         # User(self.db).delete(user_id)
         pass
+
+
+class Authenticate(BaseView):
+    #get user authenticated
+    
+    def on_post(self,req,resp):
+        #authenticate user given username and password
+        schema={"properties":{"email": {"type": "string","format":"email"},
+                               "password": {"type": "string"}
+                               },
+                "required":["email","password"]
+               }
+
+        data=validate_jsonschema(schema,req.media)
+        user=User(self.db)
+        user_data=user.get_by_email(email=data.get('email'))
+        if not user_data:
+            raise falcon.HTTPBadRequest('Invalid Credentials',description="Login Failed")
+        
+        #verify password
+        password_hash=user_data.pop('password')
+
+        if not user.verify_password(hash=password_hash,password=data.get('password')):
+            raise falcon.HTTPBadRequest('Invalid Credentials',description="Invalid username or password")    
+        resp.media=user_data
+
+
+        
